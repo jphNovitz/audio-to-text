@@ -1,0 +1,11 @@
+title:
+  register: "Inscription"
+  login: "Connexion"
+button:
+  login: "Connexion"
+  logout: "Déconnexion"
+  register: "Je m'enregistre"
+form:
+  agree: "J'accepte les Conditions"
+  password: "Mot de passe"
+  email: "Email"

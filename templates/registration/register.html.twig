@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+    <div class="my-16 p-16 m-auto w-ful md:max-w-96 bg-light-neutral/50 dark:bg-dark-neutral/50 border border-light-text-base dark:border-dark-text-base">
+        {% for flash_error in app.flashes('verify_email_error') %}
+            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+        {% endfor %}
+
+        <h1>{% trans %}title.register{% endtrans %}</h1>
+
+        {{ form_errors(registrationForm) }}
+
+        {{ form_start(registrationForm, { 'attr': {'class': 'flex flex-col space-y-8'} }) }}
+        <div class="w-full flex flex-col space-y-2">
+            {{ form_label(registrationForm.email) }}
+            {{ form_widget(registrationForm.email) }}
+        </div>
+        <div class="w-full flex flex-col space-y-2">
+            {{ form_label(registrationForm.plainPassword) }}{{ form_widget(registrationForm.plainPassword) }}
+        </div>
+        <div class="w-full flex items-end justify-start space-x-4">
+            {{ form_label(registrationForm.agreeTerms) }}
+            {{ form_widget(registrationForm.agreeTerms) }}
+        </div>
+        <button type="submit" class="bg-light-primary dark:bg-dark-primary text-light-neutral dark:text-light-neutral py-2 my-4">{% trans %}button.register{% endtrans %}</button>
+        {{ form_end(registrationForm) }}
+
+
+        <a href="{{ path('app_login') }}" class="hover:underline">
+            {% trans %}button.login{% endtrans %}
+        </a>
+
+    </div>
+{% endblock %}

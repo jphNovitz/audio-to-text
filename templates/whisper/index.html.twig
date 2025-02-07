@@ -1,0 +1,8 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello WhisperController!{% endblock %}
+
+{% block body %}
+    {{ transcription|replace({'.': '.<br>'})|raw }}
+
+{% endblock %}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr_BE">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <link rel="icon"
+          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+    {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
+
+    {% endblock %}
+
+    {% block javascripts %}
+        {% block importmap %}
+            {{ importmap('app') }}
+        {% endblock %}
+    {% endblock %}
+</head>
+<body class="w-full md:max-w-4xl  lg:max-w-7xl  min-h-screen h-auto bg-light-neutral dark:bg-light-neutral">
+<div class="px-4  pb-8 pt-0">
+    <div class="w-full py-4"> {% block nav_secondary%} {% endblock%} </div>
+    {% block body %}{% endblock %}
+</div>
+</body>
+</html>
