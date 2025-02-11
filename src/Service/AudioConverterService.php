@@ -1,35 +1,54 @@
 <?php
+
 namespace App\Service;
 
 use FFMpeg\FFMpeg;
 use FFMpeg\Format\Audio\Mp3;
+use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Mercure\Update;
 
 
 class AudioConverterService
 {
     private FFMpeg $ffmpeg;
 
-    public function __construct()
+    public function __construct(private string $inputPath, private string $outputPath)
     {
         // Configure les chemins vers ffmpeg et ffprobe selon ton environnement
         $this->ffmpeg = FFMpeg::create([
-            'ffmpeg.binaries'  => '/usr/bin/ffmpeg',
+            'ffmpeg.binaries' => '/usr/bin/ffmpeg',
             'ffprobe.binaries' => '/usr/bin/ffprobe',
-            'timeout'          => 3600, // optionnel
-            'ffmpeg.threads'   => 12,   // optionnel
+            'timeout' => 3600, // optionnel
+            'ffmpeg.threads' => 12,   // optionnel
         ]);
     }
 
-    /**
-     * Convertit un fichier audio quel que soit son format (tant qu'il est supporté)
-     * en fichier OGG.
-     *
-     * @param string $inputPath  Chemin vers le fichier source
-     * @param string $outputPath Chemin où enregistrer le fichier OGG converti
-     */
-    public function convertToMp3(string $inputPath, string $outputPath): void
+
+    public function convertToMp3(): bool
     {
-        $audio = $this->ffmpeg->open($inputPath);
-        $audio->save(new Mp3(), $outputPath);
+        try {
+            $audio = $this->ffmpeg->open($this->inputPath);
+
+            $format = new Mp3();
+            $format->setAudioKiloBitrate(192);
+
+            // Ajout des options threads via les filtres
+            $audio->filters()->custom('threads', '4');
+
+            $audio->save($format, $this->outputPath);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+
+       /* try {
+            $audio = $this->ffmpeg->open($this->inputPath);
+            $audio->save(new Mp3(), $this->outputPath);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+//            dump('Erreur lors de la conversion:', $e->getMessage());
+        }*/
+
     }
 }
