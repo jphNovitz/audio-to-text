@@ -8,15 +8,19 @@ use FFMpeg\Format\Audio\Mp3;
 use Symfony\Component\Filesystem\Path;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Mercure\HubInterface;
+use Symfony\Component\Mercure\Update;
 
 class AudioSplitterService
 {
     private $ffmpeg;
     private $filesystem;
-    private const SEGMENT_DURATION = 300; // 10 minutes en secondes
-
-    public function __construct()
+    private const SEGMENT_DURATION = 300;
+    private string $baseDir;
+    public function __construct(string $baseDir, private HubInterface $hub)
     {
+        $this->baseDir = $baseDir;
+
         $this->filesystem = new Filesystem();
         $this->ffmpeg = FFMpeg::create([
             'ffmpeg.binaries' => '/usr/bin/ffmpeg',
@@ -35,9 +39,7 @@ class AudioSplitterService
      */
     public function split(string $inputFile, string $outputDir = "audio_segments"): array
     {
-        $projectRoot = __DIR__ . '/../../';
-        $tempPath = Path::normalize($projectRoot . 'var/tmp/' . $outputDir);
-
+        $tempPath = Path::normalize($this->baseDir . '/var/tmp/' . $outputDir);
 
         $this->filesystem->remove($tempPath);
         if (!file_exists($inputFile)) {
@@ -66,12 +68,24 @@ class AudioSplitterService
 
                 $this->createSegment($inputFile, $outputFile, $startTime, $segmentDuration);
                 $outputFiles[] = $outputFile;
+
+                try {
+                    $update = new Update(
+                        'progression',
+                        json_encode(['message' => 'true'])
+                    );
+
+                    $this->hub->publish($update);
+
+                } catch (\Exception $e) {
+                    dump('Erreur lors de la publication:', $e->getMessage());
+                }
             }
 
             return $outputFiles;
 
         } catch (\Exception $e) {
-            dd($e);
+//            dd($e);
             throw new \RuntimeException("Erreur lors du découpage audio: " . $e->getMessage());
         }
     }
