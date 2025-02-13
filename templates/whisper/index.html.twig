@@ -1,52 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello WhisperController!{% endblock %}
-
 {% block body %}
-    <div class=" w-full flex flex-col">
-        <h2>Traitement</h2>
-        <div id="progress"></div>
-        <div class="w-full" id="transcription"></div>
-    </div>
-    {#    {{ transcription|replace({'.': '.<br>'})|raw }} #}
+    <section class="w-full  mx-auto md:w-4/5 lg:w-2/3 flex flex-col p-8 my-16 space-y-8 rounded-lg bg-base-light">
+        <h2 class="text-lg font-semibold">Téléchargement du fichier audio</h2>
+        <p>Veuillez telecharger un fichier audio via le formulaire ci-dessous.</p>
 
-{% endblock %}
-
-{% block js %}
-    <script>
-
-        {#    // Adaptez selon ce que vous envoyez dans $update #}
-        {#    const p = document.createElement('p'); #}
-        {#    p.textContent = data.message; // Si vous envoyez juste json_encode(1) #}
-        {#    // ou p.textContent = data.message; si vous envoyez un objet avec une clé message #}
-
-        {#    document.getElementById('notifications').appendChild(p); #}
-        {# }; #}
-
-        {# eventSource.onerror = function (error) { #}
-        {#    console.log('État de la connexion:', eventSource.readyState); #}
-        {#    console.error('Erreur lors de la connexion Mercure:', error); #}
-        {# }; #}
-
-
-        const eventSource = new EventSource("{{ mercure([
-                'progression',
-                'transcription',
-                ])|escape('js') }}");
-        eventSource.onmessage = event => {
-            // Will be called every time an update is published by the server
-            const data = JSON.parse(event.data);
-            console.log(data.message);
-            if (data.message === 'true') {
-                const div = document.getElementById('progress');
-                div.textContent += "* ";
-                console.log(data.message);
-            } else{
-                const divTrans = document.getElementById('transcription');
-                divTrans.innerHTML += data.message;
-            }
-
-        }
-
-    </script>
+        {{ form_start(form, {'attr': {
+            'class': 'bg-surface-light p-4 rounded-lg flex flex-col space-y-4'
+        }}) }}
+        <div class="mb-4">
+            {{ form_label(form.file) }}
+        </div>
+        <div>
+            {{ form_widget(form.file) }}
+        </div>
+        <div class="py-8">
+            <button type="submit" class="bg-surface-secondary text-content-secondary font-black px-3 py-2.5 rounded-lg">Envoi !</button>
+        </div>
+        {{ form_end(form) }}
+    </section>
 {% endblock %}

@@ -1,42 +1,25 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Whisper;
 
 use App\Form\AudioFileType;
 use App\Message\AudioSplitMessage;
 use App\Message\AudioToTextMessage;
 use App\Message\ConvertAudioMessage;
-use App\Service\AudioConverterService;
-use App\Service\AudioSplitterService;
-use App\Service\WhisperService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Update;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class WhisperController extends AbstractController
 {
 
-    #[Route('/start', name: 'app_start')]
+    #[Route('/', name: 'app_default')]
     public function upload(Request $request, HubInterface $hub): Response
     {
-//        phpinfo() ; die;
-//        try {
-//            $update = new Update(
-//                'conversion',
-//                json_encode(['message' => 'Conversion OK'])
-//            );
-//
-//            $hub->publish($update);
-//
-//        } catch (\Exception $e) {
-//            dump('Erreur lors de la publication:', $e->getMessage());
-//        }
         $form = $this->createForm(AudioFileType::class);
         $form->handleRequest($request);
 
@@ -59,7 +42,7 @@ final class WhisperController extends AbstractController
             }
         }
 
-        return $this->render('whisper/upload.html.twig', [
+        return $this->render('whisper/index.html.twig', [
             'form' => $form->createView(),
         ]);
     }
@@ -89,6 +72,6 @@ final class WhisperController extends AbstractController
 //            dd($e);
 //            return new Response('Erreur : ' . $e->getMessage());
 //        }
-        return $this->render('whisper/index.html.twig');
+        return $this->render('whisper/process.html.twig');
     }
 }

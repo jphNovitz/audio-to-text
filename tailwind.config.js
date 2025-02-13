@@ -12,22 +12,22 @@ module.exports = {
       },
       colors: {
         "transparent": "transparent",
-        "white": "#F8F9FA",
+        "white": "#E8E8E8",
         "base": {
-          "light": "#FFFFFF", // Blanc pur pour le fond en mode clair
-          "dark": "#121212",  // Noir profond pour le fond en mode sombre
+          "light": "rgb(209 213 219 / var(--tw-bg-opacity, 1))",
+          "dark": "#1E1E1E",
         },
         "surface": {
-          "light": "#F5F5F5",
+          "light": "rgb(229 231 235 / var(--tw-bg-opacity, 1))",
           "dark": "#1E1E1E",
-          "secondary": "#B0B0B0",
+          "secondary": "#FFC537",
         },
         "content": {
           "primary": {
             "light": "#333333",
             "dark": "#E0E0E0",
           },
-          "secondary": "#8C8C8C",
+          "secondary": "#1E5D9D",
         },
       },
     },
