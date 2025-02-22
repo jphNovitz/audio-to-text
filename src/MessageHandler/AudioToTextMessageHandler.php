@@ -12,13 +12,15 @@ final class AudioToTextMessageHandler
     public function __construct(private WhisperService $whisperService)
     {
     }
-    public function __invoke(AudioToTextMessage $message): string
+    public function __invoke(AudioToTextMessage $message): bool
     {
         try {
             $transcription = $this->whisperService->transcribeAudio();
+            return true;
 
         } catch (\Exception $e) {
-            dump('Erreur lors de la publication:', $e->getMessage());
+            return false;
+//            dump('Erreur lors de la publication:', $e->getMessage());
         }
     }
 }

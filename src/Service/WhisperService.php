@@ -25,12 +25,13 @@ readonly class WhisperService
      * @throws RedirectionExceptionInterface
      * @throws DecodingExceptionInterface
      * @throws ClientExceptionInterface
+     * @throws \Exception
      */
-    public function transcribeAudio(string $audioDirPath = "audio_segments"): string
+    public function transcribeAudio(string $audioDirPath = "audio_segments"): bool
     {
         $tempPath = Path::normalize($this->baseDir . '/var/tmp/' . $audioDirPath);
 
-        if (!directoryExists($tempPath)) {
+        if (!is_dir($tempPath)) {
             throw new \Exception("Fichiers non trouvé : " . $tempPath);
         }
 
@@ -45,11 +46,9 @@ readonly class WhisperService
             $audioParts[] = $file->getRelativePathname();
         }
 
-        $transcript = '';
 
         foreach ($audioParts as $index => $audioPart) {
             $audioFilePath = $tempPath . '/' . $audioPart;
-//            dump($audioFilePath);
             $response = $this->httpClient->request('POST', 'https://api.openai.com/v1/audio/transcriptions', [
                 'headers' => [
                     'Authorization' => 'Bearer ' . $this->apiKey,
@@ -58,49 +57,35 @@ readonly class WhisperService
                     'file' => fopen($audioFilePath, 'r'),
                     'model' => 'whisper-1',
                     'language' => 'fr',
+                    'prompt' => $index === 0
+                        ? "Clean transcription without repetitions."
+                        : "Continue the transcription naturally, without repeating previous content.",
                     'temperature' => '0'
                 ]
             ]);
 
             // Récupérer la réponse
             $statusCode = $response->getStatusCode();
-
             if ($statusCode === 200) {
                 $data = $response->toArray();
-                $transcript_array[$index] = $data['text'];
+                dump($data['text']);
+                $message = str_replace('. ', '.<br>', trim($data['text']));
 
                 try {
                     $update = new Update(
-                        'progression',
-                        json_encode(['message' => 'true'])
+                        'transcription',
+                        json_encode(['message' => $message, 'segment' => $index])
                     );
 
                     $this->hub->publish($update);
-
                 } catch (\Exception $e) {
-                    dump('Erreur lors de la publication:', $e->getMessage());
+                    throw new \Exception("Erreur Mercure : " . $e->getMessage());
                 }
-            }
-            else {
+            } else {
                 throw new \Exception("Erreur API Whisper : " . $response->getContent(false));
             }
         }
 
-
-        ksort($transcript_array);
-        $message = implode(" ", $transcript_array);
-        $message = str_replace('. ', '.<br>', $message);
-
-        try {
-            $update = new Update(
-                'transcription',
-                json_encode(['message' => $message])
-            );
-
-            $this->hub->publish($update);
-
-        } catch (\Exception $e) {
-            dump('Erreur lors de la publication:', $e->getMessage());
-        }
+        return true;
     }
 }

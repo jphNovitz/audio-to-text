@@ -28,6 +28,7 @@ services:
     App\Service\AudioSplitterService:
         arguments:
             $baseDir: '%kernel.project_dir%'
+            $completePath: '%kernel.project_dir%/var/tmp/audio_raw/%env(AUDIO_OUTPUT_FILE)%'
 
     App\Service\WhisperService:
       arguments:
@@ -36,7 +37,5 @@ services:
 
     #handlers
     App\MessageHandler\AudioSplitMessageHandler:
-        arguments:
-            $baseDir: '%kernel.project_dir%'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

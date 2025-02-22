@@ -6,6 +6,9 @@ use App\Form\AudioFileType;
 use App\Message\AudioSplitMessage;
 use App\Message\AudioToTextMessage;
 use App\Message\ConvertAudioMessage;
+use App\Service\AudioConverterService;
+use App\Service\AudioSplitterService;
+use App\Service\WhisperService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +21,7 @@ final class WhisperController extends AbstractController
 {
 
     #[Route('/', name: 'app_default')]
-    public function upload(Request $request, HubInterface $hub): Response
+    public function upload(Request $request, MessageBusInterface $bus,HubInterface $hub): Response
     {
         $form = $this->createForm(AudioFileType::class);
         $form->handleRequest($request);
@@ -33,9 +36,14 @@ final class WhisperController extends AbstractController
 
                 try {
                     $file->move($destination, $nomFichier);
-                    return $this->redirectToRoute('app_conversion');
+//                    return $this->redirectToRoute('app_conversion');
+                    $bus->dispatch(new ConvertAudioMessage());
+                    $bus->dispatch(new AudioSplitMessage());
+                    $bus->dispatch(new AudioToTextMessage());
+//die;
+                    return $this->render('whisper/process.html.twig');
                 } catch (FileException $e) {
-                    dd($e);
+                    dd('erreur upload');
                     // Traiter l'erreur si nécessaire
                 }
 
@@ -48,30 +56,15 @@ final class WhisperController extends AbstractController
     }
 
     #[Route('/conversion', name: 'app_conversion')]
-    public function transcribeAudio(MessageBusInterface $bus): Response
+    public function transcribeAudio(MessageBusInterface $bus,AudioSplitterService $audioSplitterService,  AudioConverterService $audioConverterService, WhisperService $whisperService): Response
     {
+//        $audioConverterService->convertToMp3();
+//        $audioSplitterService->split();
+//        $whisperService->transcribeAudio();
         $bus->dispatch(new ConvertAudioMessage());
         $bus->dispatch(new AudioSplitMessage());
-        sleep(120);
         $bus->dispatch(new AudioToTextMessage());
-
-        /*   // Récupérer le répertoire du projet
-           $projectDir = $this->getParameter('kernel.project_dir');
-           // Construire le chemin complet vers le fichier audio situé dans le dossier public
-           $filePath = $projectDir . '/public/essai.mp3';
-   //        $filePath = $projectDir . '/public/Essai.ogg';
-   //        $filePath = $projectDir . '/public/apollo.ogg';*/
-
-
-//        try {
-//            $transcription = $whisperService->transcribeAudio();
-//            return $this->render('whisper/index.html.twig', [
-//                'transcription' => $transcription,
-//            ]);
-//        } catch (\Exception $e) {
-//            dd($e);
-//            return new Response('Erreur : ' . $e->getMessage());
-//        }
+//die;
         return $this->render('whisper/process.html.twig');
     }
 }

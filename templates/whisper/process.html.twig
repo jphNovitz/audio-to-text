@@ -1,52 +1,48 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}Hello WhisperController!{% endblock %}
-
 {% block body %}
-    <div class=" w-full flex flex-col">
+    <div class="w-full flex flex-col">
         <h2>Traitement</h2>
         <div id="progress"></div>
         <div class="w-full" id="transcription"></div>
     </div>
-    {#    {{ transcription|replace({'.': '.<br>'})|raw }} #}
-
 {% endblock %}
 
 {% block js %}
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM chargé');
+            const progressDiv = document.getElementById('progress');
+            const transcriptionDiv = document.getElementById('transcription');
 
-        {#    // Adaptez selon ce que vous envoyez dans $update #}
-        {#    const p = document.createElement('p'); #}
-        {#    p.textContent = data.message; // Si vous envoyez juste json_encode(1) #}
-        {#    // ou p.textContent = data.message; si vous envoyez un objet avec une clé message #}
-
-        {#    document.getElementById('notifications').appendChild(p); #}
-        {# }; #}
-
-        {# eventSource.onerror = function (error) { #}
-        {#    console.log('État de la connexion:', eventSource.readyState); #}
-        {#    console.error('Erreur lors de la connexion Mercure:', error); #}
-        {# }; #}
-
-
-        const eventSource = new EventSource("{{ mercure([
-                'progression',
-                'transcription',
-                ])|escape('js') }}");
-        eventSource.onmessage = event => {
-            // Will be called every time an update is published by the server
-            const data = JSON.parse(event.data);
-            console.log(data.message);
-            if (data.message === 'true') {
-                const div = document.getElementById('progress');
-                div.textContent += "* ";
-                console.log(data.message);
-            } else{
-                const divTrans = document.getElementById('transcription');
-                divTrans.innerHTML += data.message;
+            if (!progressDiv || !transcriptionDiv) {
+                console.error('Elements progress ou transcription non trouvés');
+                return;
             }
 
-        }
+            const eventSource = new EventSource("{{ mercure([
+                'progression',
+                'transcription'
+            ])|escape('js') }}");
 
+            eventSource.onmessage = event => {
+                try {
+                    const data = JSON.parse(event.data);
+                    console.log('Message reçu:', data);
+
+                    if (data.message === 'true') {
+                        progressDiv.textContent += "* ";
+                    } else {
+                        transcriptionDiv.innerHTML += data.message;
+                    }
+                } catch (error) {
+                    console.error('Erreur de parsing JSON:', error);
+                }
+            };
+
+            eventSource.onerror = error => {
+                console.error('Erreur Mercure:', error);
+            };
+        });
     </script>
 {% endblock %}

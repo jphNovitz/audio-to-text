@@ -16,8 +16,7 @@ class AudioSplitterService
     private $ffmpeg;
     private $filesystem;
     private const SEGMENT_DURATION = 300;
-    private string $baseDir;
-    public function __construct(string $baseDir, private HubInterface $hub)
+    public function __construct(private string $baseDir, private string $completePath, private HubInterface $hub)
     {
         $this->baseDir = $baseDir;
 
@@ -31,43 +30,44 @@ class AudioSplitterService
     }
 
     /**
-     * Découpe un fichier audio en segments de 10 minutes
+     * Découpe un fichier audio en segments
      *
-     * @param string $inputFile Chemin du fichier à découper
      * @param string $outputDir Dossier où stocker les segments
-     * @return array Liste des chemins des segments créés
      */
-    public function split(string $inputFile, string $outputDir = "audio_segments"): array
+    public function split(string $outputDir = "audio_segments"): void
     {
         $tempPath = Path::normalize($this->baseDir . '/var/tmp/' . $outputDir);
 
-        $this->filesystem->remove($tempPath);
-        if (!file_exists($inputFile)) {
+        if (!file_exists($this->completePath)) {
             throw new \RuntimeException("Le fichier source n'existe pas");
         }
 
-        // Créer le dossier de sortie s'il n'existe pas
-        $this->filesystem->mkdir($tempPath);
-
-//        $this->filesystem->mkdir($outputDir);
+        if (!file_exists($tempPath)) {
+            $this->filesystem->mkdir($tempPath);
+        } else {
+            $this->filesystem->remove(glob($tempPath . '/*'));
+        }
 
         try {
-            $duration = $this->getDuration($inputFile);
+            $duration = $this->getDuration($this->completePath);
+//            dump($duration / self::SEGMENT_DURATION);
             $numberOfSegments = ceil($duration / self::SEGMENT_DURATION);
-            $outputFiles = [];
+//            dd($numberOfSegments);
+//            $outputParts = [];
 
             for ($i = 0; $i < $numberOfSegments; $i++) {
+                dump($i);
                 $startTime = $i * self::SEGMENT_DURATION;
                 $segmentDuration = min(self::SEGMENT_DURATION, $duration - $startTime);
 
-                $outputFile = sprintf(
+                $outputPart = sprintf(
                     '%s/segment_%03d.mp3',
                     rtrim($tempPath, '/'),
                     $i + 1
                 );
 
-                $this->createSegment($inputFile, $outputFile, $startTime, $segmentDuration);
-                $outputFiles[] = $outputFile;
+                $this->createSegment($this->completePath, $outputPart, $startTime, $segmentDuration);
+//                $outputParts[] = $outputPart;
 
                 try {
                     $update = new Update(
@@ -82,10 +82,9 @@ class AudioSplitterService
                 }
             }
 
-            return $outputFiles;
 
         } catch (\Exception $e) {
-//            dd($e);
+//            dd($e->getMessage());
             throw new \RuntimeException("Erreur lors du découpage audio: " . $e->getMessage());
         }
     }
@@ -97,12 +96,12 @@ class AudioSplitterService
     }
 
     private function createSegment(
-        string $inputFile,
-        string $outputFile,
+        string $rawFile,
+        string $outputPart,
         float $startTime,
         float $duration
     ): void {
-        $audio = $this->ffmpeg->open($inputFile);
+        $audio = $this->ffmpeg->open($rawFile);
         $audio->filters()->clip(
             TimeCode::fromSeconds($startTime),
             TimeCode::fromSeconds($duration)
@@ -110,8 +109,8 @@ class AudioSplitterService
 
         $format = new Mp3();
         $format->setAudioChannels(2)
-            ->setAudioKiloBitrate(256);
+            ->setAudioKiloBitrate(32);
 
-        $audio->save($format, $outputFile);
+        $audio->save($format, $outputPart);
     }
 }

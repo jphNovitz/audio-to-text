@@ -12,7 +12,9 @@ class AudioConverterService
 {
     private FFMpeg $ffmpeg;
 
-    public function __construct(private string $inputPath, private string $outputPath)
+    public function __construct(private readonly string $inputPath,
+                                private readonly string $outputPath,
+                                private readonly HubInterface $hub)
     {
         // Configure les chemins vers ffmpeg et ffprobe selon ton environnement
         $this->ffmpeg = FFMpeg::create([
@@ -30,25 +32,27 @@ class AudioConverterService
             $audio = $this->ffmpeg->open($this->inputPath);
 
             $format = new Mp3();
-            $format->setAudioKiloBitrate(192);
-
-            // Ajout des options threads via les filtres
-            $audio->filters()->custom('threads', '4');
-
+            $format->setAudioKiloBitrate(32);
             $audio->save($format, $this->outputPath);
+
+            try {
+                $update = new Update(
+                    'progression',
+                    json_encode(['message' => 'true'])
+                );
+
+                $this->hub->publish($update);
+
+            } catch (\Exception $e) {
+                dump('Conversion - Erreur lors de la publication:', $e->getMessage());
+            }
             return true;
+
         } catch (\Exception $e) {
             return false;
+//            return $e->getMessage();
         }
 
-       /* try {
-            $audio = $this->ffmpeg->open($this->inputPath);
-            $audio->save(new Mp3(), $this->outputPath);
-            return true;
-        } catch (\Exception $e) {
-            return false;
-//            dump('Erreur lors de la conversion:', $e->getMessage());
-        }*/
 
     }
 }

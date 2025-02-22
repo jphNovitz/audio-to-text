@@ -6,7 +6,8 @@
         <p>Veuillez telecharger un fichier audio via le formulaire ci-dessous.</p>
 
         {{ form_start(form, {'attr': {
-            'class': 'bg-surface-light p-4 rounded-lg flex flex-col space-y-4'
+            'class': 'bg-surface-light p-4 rounded-lg flex flex-col space-y-4',
+            'data-turbo': 'false'
         }}) }}
         <div class="mb-4">
             {{ form_label(form.file) }}

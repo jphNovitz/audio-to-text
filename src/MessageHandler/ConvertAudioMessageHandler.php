@@ -17,19 +17,6 @@ final class ConvertAudioMessageHandler
 
     public function __invoke(ConvertAudioMessage $message): void
     {
-        if ($this->audioConverterService->convertToMp3()) {
-
-            try {
-                $update = new Update(
-                    'progression',
-                    json_encode(['message' => 'true'])
-                );
-
-                $this->hub->publish($update);
-
-            } catch (\Exception $e) {
-                dump('Erreur lors de la publication:', $e->getMessage());
-            }
-        }
+        $this->audioConverterService->convertToMp3();
     }
 }

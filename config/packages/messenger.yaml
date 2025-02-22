@@ -10,8 +10,13 @@ framework:
                     use_notify: true
                     check_delayed_interval: 60000
                 retry_strategy:
-                    max_retries: 3
+                    delay: 3000
+                    # Multiplicateur pour augmenter le délai à chaque tentative
                     multiplier: 2
+                    # Délai maximum en ms (ex: 1 heure)
+                    max_delay: 3600000
+                    # Nombre maximum de retries
+                    max_retries: 3
             failed: 'doctrine://default?queue_name=failed'
             # sync: 'sync://'
 
