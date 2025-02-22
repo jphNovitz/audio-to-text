@@ -15,6 +15,9 @@
         <div>
             {{ form_widget(form.file) }}
         </div>
+        <div>
+            {{ form_errors(form.file) }}
+        </div>
         <div class="py-8">
             <button type="submit" class="bg-surface-secondary text-content-secondary font-black px-3 py-2.5 rounded-lg">Envoi !</button>
         </div>
