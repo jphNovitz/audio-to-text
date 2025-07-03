@@ -17,6 +17,6 @@ final class ConvertAudioMessageHandler
 
     public function __invoke(ConvertAudioMessage $message): void
     {
-        $this->audioConverterService->convertToMp3();
+//        $this->audioConverterService->convertToMp3();
     }
 }

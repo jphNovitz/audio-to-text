@@ -5,6 +5,7 @@ namespace App\Service;
 use FFMpeg\FFMpeg;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\Format\Audio\Mp3;
+use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Filesystem\Path;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -16,7 +17,8 @@ class AudioSplitterService
     private $ffmpeg;
     private $filesystem;
     private const SEGMENT_DURATION = 300;
-    public function __construct(private string $baseDir, private string $completePath, private HubInterface $hub)
+    public function __construct(private string $baseDir,
+                                private string $inputPath)
     {
         $this->baseDir = $baseDir;
 
@@ -34,11 +36,15 @@ class AudioSplitterService
      *
      * @param string $outputDir Dossier où stocker les segments
      */
-    public function split(string $outputDir = "audio_segments"): void
+    public function split(string $inputFile, string $outputDir = "audio_segments"): bool
     {
-        $tempPath = Path::normalize($this->baseDir . '/var/tmp/' . $outputDir);
 
-        if (!file_exists($this->completePath)) {
+        $tempPath = Path::normalize($this->baseDir . '/var/tmp/' . $outputDir);
+//        $inputFile = Path::normalize($this->inputPath . '/' . $rawName);
+//dump($rawName);
+//      dd($inputFile);
+
+        if (!file_exists($inputFile) || !is_readable($inputFile)) {
             throw new \RuntimeException("Le fichier source n'existe pas");
         }
 
@@ -49,7 +55,7 @@ class AudioSplitterService
         }
 
         try {
-            $duration = $this->getDuration($this->completePath);
+            $duration = $this->getDuration($inputFile);
 //            dump($duration / self::SEGMENT_DURATION);
             $numberOfSegments = ceil($duration / self::SEGMENT_DURATION);
 //            dd($numberOfSegments);
@@ -66,26 +72,30 @@ class AudioSplitterService
                     $i + 1
                 );
 
-                $this->createSegment($this->completePath, $outputPart, $startTime, $segmentDuration);
+                $this->createSegment($inputFile, $outputPart, $startTime, $segmentDuration);
 //                $outputParts[] = $outputPart;
 
-                try {
-                    $update = new Update(
-                        'progression',
-                        json_encode(['message' => 'true'])
-                    );
+//                try {
+//                    $update = new Update(
+//                        'progression',
+//                        json_encode(['message' => 'true'])
+//                    );
+//
+//                    $this->hub->publish($update);
+//
+//                } catch (\Exception $e) {
+//                    dump('Erreur lors de la publication:', $e->getMessage());
+//                }
 
-                    $this->hub->publish($update);
-
-                } catch (\Exception $e) {
-                    dump('Erreur lors de la publication:', $e->getMessage());
-                }
             }
-
+            return true;
 
         } catch (\Exception $e) {
 //            dd($e->getMessage());
-            throw new \RuntimeException("Erreur lors du découpage audio: " . $e->getMessage());
+            return false;
+//            dd($e->getMessage());
+//            throw new \RuntimeException("Erreur lors du découpage audio: " . $e->getMessage());
+
         }
     }
 

@@ -1,0 +1,23 @@
+<div class="container" {{ attributes }}>
+
+    <div class="form-group mb-3">
+        <label for="single-file" class="form-label">Single file:</label>
+        <input
+                type="file"
+                name="audioFile"
+                autocomplete="off"
+                id="audioFile"
+                class="form-control-file {{ error ? 'is-invalid' : '' }}"
+        >
+       {% if error %}
+            <div class="invalid-feedback">{{ error }}</div>
+        {% endif %}
+    </div>
+
+    <button
+            data-action="live#action"
+            data-live-action-param="files|uploadFiles"
+            class="btn btn-primary"
+    >Upload files!</button>
+
+</div>

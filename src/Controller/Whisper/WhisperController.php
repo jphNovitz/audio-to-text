@@ -5,6 +5,7 @@ namespace App\Controller\Whisper;
 use App\Form\AudioFileType;
 use App\Message\AudioSplitMessage;
 use App\Message\AudioToTextMessage;
+use App\Message\ConvertAudioMessage;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,10 +17,16 @@ use Symfony\Component\Routing\Attribute\Route;
 final class WhisperController extends AbstractController
 {
 
+    #[Route('/', name: "app_index")]
+    public function index()
+    {
+     return $this->render('index.html.twig');
+    }
+
     /**
      * @throws ExceptionInterface
      */
-    #[Route('/', name: 'app_default')]
+    #[Route('/old', name: 'app_old')]
     public function upload(Request $request, MessageBusInterface $bus, HubInterface $hub): Response
     {
         $form = $this->createForm(AudioFileType::class);
@@ -34,8 +41,9 @@ final class WhisperController extends AbstractController
                 $nomFichier = 'input.' . $file->getClientOriginalExtension();
 
                 $file->move($destination, $nomFichier);
-                $bus->dispatch(new AudioSplitMessage());
-                $bus->dispatch(new AudioToTextMessage());
+                $bus->dispatch(new ConvertAudioMessage());
+//                $bus->dispatch(new AudioSplitMessage());
+//                $bus->dispatch(new AudioToTextMessage());
                 return $this->render('whisper/process.html.twig');
             }
         }
