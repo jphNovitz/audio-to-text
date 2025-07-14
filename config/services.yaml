@@ -22,13 +22,14 @@ services:
     #services
     App\Service\AudioConverterService:
         arguments:
-            $inputPath:  '%kernel.project_dir%/var/tmp/audio_raw/%env(AUDIO_INPUT_FILE)%'
+            $inputPath:  '%kernel.project_dir%/var/tmp/audio_raw'
             $outputPath: '%kernel.project_dir%/var/tmp/audio_raw/%env(AUDIO_OUTPUT_FILE)%'
+#            $messagePublisher: App\Service\MessagePublisher
 
     App\Service\AudioSplitterService:
         arguments:
             $baseDir: '%kernel.project_dir%'
-            $completePath: '%kernel.project_dir%/var/tmp/audio_raw/%env(AUDIO_OUTPUT_FILE)%'
+            $inputPath: '%kernel.project_dir%/var/tmp/audio_raw/'
 
     App\Service\WhisperService:
       arguments:
