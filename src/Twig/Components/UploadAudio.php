@@ -39,6 +39,9 @@ final class UploadAudio
     #[LiveProp(writable: true)]
     public $audioFilename = null;
 
+    #[LiveProp(writable: true)]
+    public $audioFile = null;
+
     #[LiveProp]
     public $error = null;
 
