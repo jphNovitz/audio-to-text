@@ -1,10 +1,10 @@
-# Whisperina
+# Audio-To-Text
 
 ## 🇫🇷 Présentation
 
 J’ai vu ma compagne passer des heures à écouter des audios pour les transcrire en texte. La programmation et l’IA doivent servir à ça : faciliter le travail des gens.
 
-Whisperina est une application développée avec **Symfony 7** qui utilise l’API **Whisper** de OpenAI pour automatiser la transcription de fichiers audio.
+Audio-To-Text est une application développée avec **Symfony 7** qui utilise l’API **Whisper** de OpenAI pour automatiser la transcription de fichiers audio.
 
 ### Principe de fonctionnement
 
@@ -25,8 +25,8 @@ Whisperina est une application développée avec **Symfony 7** qui utilise l’A
 
 1. **Cloner le dépôt**
    ```bash
-   git clone https://github.com/votre-org/whisperina.git
-   cd whisperina
+   git clone https://github.com/votre-org/Audio-To-Text.git
+   cd Audio-To-Text
 
     Installer les dépendances
 
@@ -73,9 +73,9 @@ Servir l’application
 
 🛠️ Configuration
 
-    Segment duration (config/packages/whisperina.yaml)
+    Segment duration (config/packages/Audio-To-Text.yaml)
 
-    whisperina:
+    Audio-To-Text:
       segment_duration_seconds: 60
 
     Formats audio supportés
