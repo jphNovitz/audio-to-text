@@ -4,6 +4,15 @@ module.exports = {
     "./assets/**/*.js",
     "./templates/**/*.html.twig",
   ],
+   plugins: [
+        require("@tailwindcss/typography"),
+        require('daisyui')
+    ],
+    // darkMode: "media",
+    daisyui: {
+        themes: ['corporate', 'dracula'],
+        darkTheme: "dracula",
+    },
   theme: {
     extend: {
       transitionProperty: {
@@ -32,5 +41,4 @@ module.exports = {
       },
     },
   },
-  plugins: [],
 }
