@@ -3,32 +3,59 @@
 
 
 {% block body %}
-    <div class="my-16 p-16 m-auto w-ful md:max-w-96 bg-light-neutral/50 dark:bg-dark-neutral/50 border border-light-text-base dark:border-dark-text-base">
-        <h1>{% trans %}title.login{% endtrans %}</h1>
+<div class="hero min-h-screen">
+  <div class="hero-content text-left">
+    <div class="max-w-md">
+      <h1 class="text-5xl font-bold">Comment convertir un fichier <span class="bg-primary bg-opacity-40 inline-block h-1/2">audio</span> en <span class="bg-primary bg-opacity-40 inline-block h-1/2">texte</span> ?</h1>
+      <p class="py-6 text-xl font-medium">
+        <span class="text-primary">Whisperina</span> écoute vos enregistrements et les transforme en texte, rapidement et sans effort.
+      </p>
+      
+    </div>
+  </div>
+</div>
+
+    <div class="my-16 p-16 m-auto w-full">
+        <div class="w-full md:max-w-96 border border-base-300 mx-auto p-4">
+        <div class="m-auto">
         {% if error %}
             <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
         {% endif %}
 
         <form action="{{ path('app_login') }}" method="post" class="flex flex-col  space-y-8">
 
-            {#            <div class="w-full flex justify-between"> #}
-            <label for="email">{% trans %}form.email{% endtrans %}:</label>
-            <input type="text" id="email" name="_username" value="{{ email }}">
-            {#            </div> #}
-
-            <label for="password">{% trans %}form.password{% endtrans %}:</label>
-            <input type="password" id="password" name="_password">
-
-            {# If you want to control the URL the user is redirected to on success
+             <label class="form-control w-full max-w-xs">
+              <div class="label">
+                <span for="email" class="label-text">{% trans %}form.email{% endtrans %}:</span>
+              </div>
+            <input type="text" placeholder="nom@email.com" 
+                   id="email" name="_username" value="{{ email }}" 
+                   class="input input-bordered w-full max-w-xs" />
+                       
+            </label>
+            
+            <label class="form-control w-full max-w-xs">
+              <div class="label">
+                <span for="email" class="label-text">{% trans %}form.password{% endtrans %}:</span>
+              </div>
+            <input type="text" placeholder="*****" 
+                   id="password" name="_password" 
+                   class="input input-bordered w-full max-w-xs" />
+                       
+            </label>
+           
+           {# If you want to control the URL the user is redirected to on success
         <input type="hidden" name="_target_path" value="/account"> #}
 
-            <button type="submit" class="bg-light-primary dark:bg-dark-primary text-light-neutral dark:text-light-neutral py-2 my-4">
+            <button type="submit" class="btn btn-accent">
                 {% trans %}button.login{% endtrans %}
             </button>
         </form>
 
-        <a href="{{ path('app_register') }}" class="hover:underline">
-            {% trans %}button.register{% endtrans %}
+        {#<a href="{{ path('app_register') }}" class="hover:underline">
+            {% trans %}button.register{% endtrans %} #}
         </a>
+        </div>
+        </div>
     </div>
 {% endblock %}

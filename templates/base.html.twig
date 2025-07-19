@@ -21,12 +21,10 @@
         {% endblock %}
     {% endblock %}
 </head>
-<body class="w-full h-screen max-h-screen h-auto bg-light-neutral dark:bg-light-neutral">
-<div class="container h-full mx-auto p-1 md:p-2 lg:p-4">
-    <h1 class="text-xl font-bold">Whisper Sab</h1>
-    {# <div class="px-4  pb-8 pt-0"> #}
-    {#    <div class="w-full py-4"> {% block nav_secondary%} {% endblock%} </div> #}
-    {% block body %}{% endblock %}
+<body class="w-full h-screen max-h-screen h-auto bg-base-100 text-content-primary-light dark:text-content-primary-dark">
+<div class="container bg-base-100 h-full max-w-7xl mx-auto p-4 md:p-8 ">
+    
+       {% block body %}{% endblock %}
 </div>
 </body>
 </html>
