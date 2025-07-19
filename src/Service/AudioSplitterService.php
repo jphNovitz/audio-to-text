@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Contract\AudioSplitterServiceInterface;
 use FFMpeg\FFMpeg;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\Format\Audio\Mp3;
@@ -12,7 +13,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 
-class AudioSplitterService
+class AudioSplitterService implements AudioSplitterServiceInterface
 {
     private $ffmpeg;
     private $filesystem;

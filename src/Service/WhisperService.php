@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Contract\WhisperServiceInterface;
 use Symfony\Component\Filesystem\Path;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Mercure\HubInterface;
@@ -13,7 +14,7 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use function PHPUnit\Framework\directoryExists;
 
-readonly class WhisperService
+readonly class WhisperService implements WhisperServiceInterface
 {
 
     public function __construct(private string $apiKey, private string $baseDir, private HttpClientInterface $httpClient, private HubInterface $hub)

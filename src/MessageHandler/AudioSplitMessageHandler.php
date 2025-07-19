@@ -3,15 +3,15 @@
 namespace App\MessageHandler;
 
 use App\Message\AudioSplitMessage;
-use App\Service\AudioSplitterService;
-use App\Service\MessagePublisher;
+use App\Contract\AudioSplitterServiceInterface;
+use App\Contract\MessagePublisherInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 final class AudioSplitMessageHandler
 {
-    public function __construct(private AudioSplitterService $audioSplitterService,
-                                private readonly MessagePublisher $messagePublisher)
+    public function __construct(private AudioSplitterServiceInterface $audioSplitterService,
+                                private readonly MessagePublisherInterface $messagePublisher)
     {
     }
     public function __invoke(AudioSplitMessage $message): void

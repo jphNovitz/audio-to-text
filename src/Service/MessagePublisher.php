@@ -2,10 +2,11 @@
 
 namespace App\Service;
 
+use App\Contract\MessagePublisherInterface;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 
-class MessagePublisher
+class MessagePublisher implements MessagePublisherInterface
 {
 
     public function __construct(private readonly HubInterface $hub)

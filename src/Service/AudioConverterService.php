@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Contract\AudioConverterServiceInterface;
 use FFMpeg\FFMpeg;
 use FFMpeg\Format\Audio\Mp3;
 use Symfony\Component\Mercure\HubInterface;
@@ -9,7 +10,7 @@ use Symfony\Component\Mercure\Update;
 use App\Service\MessagePublisher;
 
 
-class AudioConverterService
+class AudioConverterService implements AudioConverterServiceInterface
 {
     private FFMpeg $ffmpeg;
 
