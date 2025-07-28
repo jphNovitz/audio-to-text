@@ -17,40 +17,9 @@ use Symfony\Component\Routing\Attribute\Route;
 final class WhisperController extends AbstractController
 {
 
-    #[Route('/', name: "app_index")]
-    public function index()
+    #[Route('/app', name: "app_index")]
+    public function index(): Response
     {
      return $this->render('index.html.twig');
     }
-
-    /**
-     * @throws ExceptionInterface
-     */
-    #[Route('/old', name: 'app_old')]
-    public function upload(Request $request, MessageBusInterface $bus, HubInterface $hub): Response
-    {
-        $form = $this->createForm(AudioFileType::class);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $file = $form->get('file')->getData();
-            if ($file) {
-                // Récupère le chemin de destination depuis les paramètres
-                $destination = $this->getParameter('upload_directory');
-                // Nom fixe pour le fichier uploadé (attention : il sera écrasé à chaque upload)
-                $nomFichier = 'input.' . $file->getClientOriginalExtension();
-
-                $file->move($destination, $nomFichier);
-                $bus->dispatch(new ConvertAudioMessage());
-//                $bus->dispatch(new AudioSplitMessage());
-//                $bus->dispatch(new AudioToTextMessage());
-                return $this->render('whisper/process.html.twig');
-            }
-        }
-
-        return $this->render('whisper/index.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
 }

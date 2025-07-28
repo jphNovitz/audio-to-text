@@ -23,6 +23,13 @@
 </head>
 <body class="w-full h-screen max-h-screen h-auto bg-base-100 text-content-primary-light dark:text-content-primary-dark">
 <div class="container bg-base-100 h-full max-w-7xl mx-auto p-4 md:p-8 ">
+    <div class="text-right">
+        {% if app.user %}
+            <a href="{{ path('app_logout') }}">Déconnexion</a>
+        {% else %}
+            <a href="{{ path('app_login') }}">Connexion</a>
+        {% endif %}
+    </div>
     
        {% block body %}{% endblock %}
 </div>

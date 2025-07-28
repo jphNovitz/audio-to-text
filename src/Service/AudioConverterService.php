@@ -43,7 +43,8 @@ class AudioConverterService implements AudioConverterServiceInterface
         try {
             $audio = $this->ffmpeg->open($inputFile);
             $format = new Mp3();
-            $format->setAudioKiloBitrate(128);
+            $format->setAudioKiloBitrate(64);
+            $format->setAudioChannels(1);
 
            $audio->save($format, $this->outputPath);
 
