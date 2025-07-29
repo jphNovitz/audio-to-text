@@ -97,8 +97,6 @@ final class UploadAudio
            $this->bus->dispatch(new AudioToTextMessage());
        }
 
-
-
     }
 
     private function validateFile(UploadedFile $singleFileUpload): void

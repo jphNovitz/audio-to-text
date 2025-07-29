@@ -1,7 +1,6 @@
-<div class="w-full bg-gray-400 text-slate-50 rounded-xl p-2" {{ attributes }}>
-
-    <div class="form-group mb-3">
-        <label for="audio-file" class="form-label text-sm">Veuillez télécharger un fichier audio</label>
+<div class="w-full rounded-xl p-2" {{ attributes }}>
+    <div class="form-group w-full flex items-center  mb-3">
+        <label for="audio-file" class="form-label text-sm">Choisi un fichier</label>
         <input
                 type="file"
                 name="audioFile"
@@ -9,16 +8,20 @@
                 autocomplete="off"
                 id="audioFile"
                 class="form-control-file {{ error ? 'is-invalid' : '' }}"
+
         >
-       {% if error %}
+
+        <button data-action="live#action"
+                data-live-action-param="files|uploadFiles"
+                class="btn btn-sm btn-neutral rounded-full">
+            C'est parti !
+        </button>
+    </div>
+    <div class="w-full p-1">
+        {% if error %}
             <div class="invalid-feedback">{{ error }}</div>
         {% endif %}
     </div>
 
-    <button data-action="live#action"
-            data-live-action-param="files|uploadFiles"
-            class="btn btn-primary bg-orange-500 hover:bg-orange-600 focus:ring-4 focus:ring-orange-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">
-        Upload files!
-    </button>
 
 </div>
