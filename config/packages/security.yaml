@@ -28,6 +28,8 @@ security:
                 # "app_login" is the name of the route created previously
                 login_path: app_login
                 check_path: app_login
+                default_target_path: /app
+                # if you want to use a custom success handler, you can define it her
             logout:
                 path: /logout
 
