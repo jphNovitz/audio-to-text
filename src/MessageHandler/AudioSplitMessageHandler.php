@@ -10,8 +10,8 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 #[AsMessageHandler]
 final class AudioSplitMessageHandler
 {
-    public function __construct(private AudioSplitterServiceInterface $audioSplitterService,
-                                private readonly MessagePublisherInterface $messagePublisher)
+    public function __construct(private readonly AudioSplitterServiceInterface $audioSplitterService,
+                                private readonly MessagePublisherInterface     $messagePublisher)
     {
     }
     public function __invoke(AudioSplitMessage $message): void
