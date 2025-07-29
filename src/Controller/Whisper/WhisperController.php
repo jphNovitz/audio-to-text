@@ -20,6 +20,6 @@ final class WhisperController extends AbstractController
     #[Route('/app', name: "app_index")]
     public function index(): Response
     {
-     return $this->render('index.html.twig');
+     return $this->render('whisper/index.html.twig');
     }
 }
